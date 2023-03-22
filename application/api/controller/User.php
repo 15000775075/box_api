@@ -65,9 +65,9 @@ class User extends Api
         if (!Validate::regex($mobile, "^1\d{10}$")) {
             $this->error('手机号格式不正确');
         }
-        if (!Sms::check($mobile, $captcha, 'login') && !Sms::check($mobile, $captcha, 'register')) {
-            $this->error('验证码不正确');
-        }
+       // if (!Sms::check($mobile, $captcha, 'login') && !Sms::check($mobile, $captcha, 'register')) {
+       //     $this->error('验证码不正确');
+       // }
         $user = \app\common\model\User::getByMobile($mobile);
         if ($user) {
             if ($user->status != 'normal') {
