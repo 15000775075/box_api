@@ -34,7 +34,7 @@ use wxpay\WeixinPay;
  */
 class User extends Api
 {
-    protected $noNeedLogin = ['login', 'mobilelogin', 'getWechatInfoByAPP', 'register', 'resetpwd', 'changeemail', 'changemobile', 'third', 'userCapital', 'lunbobox', 'getBox', 'mpWxLogin', 'getCop', 'getPhoneNumber','getAdminUserImg'];
+    protected $noNeedLogin = ['login', 'mobilelogin', 'getWechatInfoByAPP', 'register', 'resetpwd', 'changeemail', 'changemobile', 'third', 'userCapital', 'lunbobox', 'getBox', 'mpWxLogin', 'getCop', 'getPhoneNumber', 'getAdminUserImg','googleLogin'];
     protected $noNeedRight = '*';
 
     protected $lockUserId = ['applyDelivery', 'exchange', 'moneyToCoin', 'withdrawal'];
@@ -65,9 +65,9 @@ class User extends Api
         if (!Validate::regex($mobile, "^1\d{10}$")) {
             $this->error('手机号格式不正确');
         }
-       // if (!Sms::check($mobile, $captcha, 'login') && !Sms::check($mobile, $captcha, 'register')) {
-       //     $this->error('验证码不正确');
-       // }
+        // if (!Sms::check($mobile, $captcha, 'login') && !Sms::check($mobile, $captcha, 'register')) {
+        //     $this->error('验证码不正确');
+        // }
         $user = \app\common\model\User::getByMobile($mobile);
         if ($user) {
             if ($user->status != 'normal') {
@@ -94,6 +94,7 @@ class User extends Api
             $this->error($this->auth->getError());
         }
     }
+
     /**
      * 退出登录
      */
@@ -102,6 +103,7 @@ class User extends Api
         $this->auth->logout();
         $this->success('退出成功');
     }
+
     /**
      * 绑定手机号
      *
@@ -135,6 +137,7 @@ class User extends Api
         Sms::flush($mobile, 'bindmobile');
         $this->success('绑定成功');
     }
+
     /**
      * 获取微信用户信息
      */
@@ -214,6 +217,7 @@ class User extends Api
             return ['code' => 200, 'msg' => 'success', 'data' => json_decode($data, true)];
         }
     }
+
     /**
      * 微信小程序登录
      *
@@ -251,6 +255,7 @@ class User extends Api
         }
         $this->error("授权失败," . $result['msg']);
     }
+
     /**
      * 三方登陆
      */
@@ -306,13 +311,13 @@ class User extends Api
             $user = $this->auth->getUserinfo();
             $this->success('登录成功！', $user);
         }
-        if(empty($user)){
-        $c = Db::table('box_user')->where('mobile', $nickName)->find();
-            if(!empty($c)){
-                Db::table('box_user')->where('mobile',$nickName)->update([$openidType => $openid, 'unionid' => $unionid]);
-            $this->auth->direct($c['id']);
-            $user = $this->auth->getUserinfo();
-            $this->success('登录成功！', $user);
+        if (empty($user)) {
+            $c = Db::table('box_user')->where('mobile', $nickName)->find();
+            if (!empty($c)) {
+                Db::table('box_user')->where('mobile', $nickName)->update([$openidType => $openid, 'unionid' => $unionid]);
+                $this->auth->direct($c['id']);
+                $user = $this->auth->getUserinfo();
+                $this->success('登录成功！', $user);
             }
         }
         if (!empty($inviteUserId)) {
@@ -366,23 +371,23 @@ class User extends Api
                 $user = $this->auth->getUserinfo();
                 // 开启邀请新用户奖励
                 if (!empty($u)) {
-                                        $s = Db::table('box_setting')->where('id', 1)->find();
-                    if($u['isdl'] != 1){
-                    $fw = explode('-', $s['yqzscoin']);
-                    $start = $fw[0];
-                    $end = $fw[1];
-                    $coin = rand($start, $end);
-                    $coinjl = Db::table('box_user')->where('id', $u['id'])->update(['score' => $u['score'] + $coin]);
-                    if (!empty($coinjl)) {
-                        $coinjldata = [
-                            'user_id' => $u['id'],
-                            'before' => $u['score'],
-                            'after' => $u['score'] + $coin,
-                            'type' => 'yqhy',
-                            'create_time' => time()
-                        ];
-                        Db::table('box_coin_record')->insert($coinjldata);
-                    }
+                    $s = Db::table('box_setting')->where('id', 1)->find();
+                    if ($u['isdl'] != 1) {
+                        $fw = explode('-', $s['yqzscoin']);
+                        $start = $fw[0];
+                        $end = $fw[1];
+                        $coin = rand($start, $end);
+                        $coinjl = Db::table('box_user')->where('id', $u['id'])->update(['score' => $u['score'] + $coin]);
+                        if (!empty($coinjl)) {
+                            $coinjldata = [
+                                'user_id' => $u['id'],
+                                'before' => $u['score'],
+                                'after' => $u['score'] + $coin,
+                                'type' => 'yqhy',
+                                'create_time' => time()
+                            ];
+                            Db::table('box_coin_record')->insert($coinjldata);
+                        }
                     }
 
 
@@ -400,9 +405,10 @@ class User extends Api
             $this->error('系统错误');
         }
     }
+
     /**
      * 生成邀请码
-     * @param 
+     * @param
      */
     public static function mycode()
     {
@@ -421,9 +427,10 @@ class User extends Api
             $g = ord($a[$f]),
             $d .= $s[($g ^ ord($a[$f + 5])) - $g & 0x1F],
             $f++
-        );
+        ) ;
         return $d;
     }
+
     /**
      * 中间加密 替换字符串的子串
      */
@@ -432,17 +439,19 @@ class User extends Api
         $new_tel = substr_replace($tel, '****', 3, 4);
         return $new_tel;
     }
+
     /**
      * 用户信息
      * @date 2021/07/08 15:54
      */
     public function userinfo()
     {
-        $ret =  Db::table('box_user')->where('id', $this->auth->id)->find();
+        $ret = Db::table('box_user')->where('id', $this->auth->id)->find();
         // $ret['avatar'] = $ret['avatar'] ? 
         $ret['avatar'] = cdnurl($ret['avatar'], true);
         $this->success('用户信息', $ret);
     }
+
     /**
      * 商城订单确认收货
      */
@@ -472,14 +481,14 @@ class User extends Api
     {
         // $pagesize = input('pagesize/d', 10);
         $page = input('page/d', 1);
-        if(input('money_type')==1){
+        if (input('money_type') == 1) {
             $money_type = 1;
             $balance = $this->auth->money;
-        }else{
+        } else {
             $money_type = 0;
             $balance = $this->auth->score;
         }
-        $list = Db::table('box_coin_record')->page($page, 10)->where('user_id', $this->auth->id)->where('money_type',$money_type)->order('create_time DESC')->select();
+        $list = Db::table('box_coin_record')->page($page, 10)->where('user_id', $this->auth->id)->where('money_type', $money_type)->order('create_time DESC')->select();
         foreach ($list as &$list_v) {
             $list_v['create_time'] = date('Y-m-d H:i:s', $list_v['create_time']);
             if ($list_v['type'] == 'pay_shop') {
@@ -494,12 +503,12 @@ class User extends Api
                 $list_v['status'] = '消费赠送';
             } else if ($list_v['type'] == 'sing_jl') {
                 $list_v['status'] = '签到获取';
-            }else if($list_v['type'] == 'yqhy'){
+            } else if ($list_v['type'] == 'yqhy') {
                 $list_v['status'] = '邀请玩家';
-            }else if($list_v['type'] == 'admin_edit'){
+            } else if ($list_v['type'] == 'admin_edit') {
                 $list_v['status'] = '管理员操作';
             }
-            $list_v['coin'] = round($list_v['coin'],2);
+            $list_v['coin'] = round($list_v['coin'], 2);
         }
         $ret = [
             'balance' => $balance,
@@ -532,6 +541,7 @@ class User extends Api
 
         $this->success('查询成功', $ret);
     }
+
     /**
      * 我的收货地址
      * @throws \think\db\exception\DataNotFoundException
@@ -544,6 +554,7 @@ class User extends Api
         $address = Db::table('box_user_address')->where('user_id', $this->auth->id)->order('is_default DESC')->select();
         $this->success('收货地址', $address);
     }
+
     /**
      * 获取单个收获地址回显
      */
@@ -552,6 +563,7 @@ class User extends Api
         $add = Db::table('box_user_address')->where('id', input('addresid'))->find();
         $this->success('查询成功', $add);
     }
+
     /**
      * 添加收货地址
      */
@@ -649,6 +661,7 @@ class User extends Api
         }
         $this->success('保存成功');
     }
+
     /**
      * 盒机回收
      */
@@ -657,11 +670,11 @@ class User extends Api
         $post = input();
         $ids = $post['id'];
         // 获取商品价值
-        if(is_array($ids)){
-            $shops = Db::table('box_prize_record')->where('id', 'in',$ids)->select();
-            $coins = array_column($shops,'goods_coin_price');
+        if (is_array($ids)) {
+            $shops = Db::table('box_prize_record')->where('id', 'in', $ids)->select();
+            $coins = array_column($shops, 'goods_coin_price');
             $coina = array_sum($coins);
-            $shop = Db::table('box_prize_record')->where('id', 'in',$ids)->update(['status' => 'exchange', 'hstime' => time()]);
+            $shop = Db::table('box_prize_record')->where('id', 'in', $ids)->update(['status' => 'exchange', 'hstime' => time()]);
             $s = Db::table('box_setting')->where('id', 1)->find();
             if (!empty($shop)) {
                 $coin = $this->auth->score + $coina;
@@ -694,7 +707,7 @@ class User extends Api
                     $this->error('回收失败');
                 }
             }
-        }else{
+        } else {
             $shops = Db::table('box_prize_record')->where('id', input('id'))->find();
             if ($shops['goods_coin_price'] == '0') {
                 $this->error('幸运币价值为0不可兑换');
@@ -736,7 +749,7 @@ class User extends Api
 
 
     }
-    
+
     /**
      * 用户签到
      */
@@ -752,12 +765,12 @@ class User extends Api
             'type' => 'sing_jl',
             'create_time' => time()
         ];
-        if($day_sign){
+        if ($day_sign) {
             $this->error('您今天已经签到过了');
         }
         /**如果有就进行判断时间差，然后处理签到次数*/
         if (!empty($sign)) {
-            
+
             $da['signtime'] = time();
             $da['count'] = $sign['count'] + 1;
             /**这里还可以加一些判断连续签到几天然后加积分等等的操作*/
@@ -767,30 +780,30 @@ class User extends Api
                 case 2:
                     $ret = Db::table('box_user')->where('id', $this->auth->id)->update(['score' => ($this->auth->score + $singjl['sign_2'])]);
                     $jl['after'] = $this->auth->score + $singjl['sign_2'];
-                    $jl['coin'] =  $singjl['sign_2'];
+                    $jl['coin'] = $singjl['sign_2'];
                     break;
                 case 3:
                     $ret = Db::table('box_user')->where('id', $this->auth->id)->update(['score' => ($this->auth->score + $singjl['sign_3'])]);
                     $jl['after'] = $this->auth->score + $singjl['sign_3'];
-                    $jl['coin'] =  $singjl['sign_3'];
+                    $jl['coin'] = $singjl['sign_3'];
                     break;
 
                 case 4:
                     $ret = Db::table('box_user')->where('id', $this->auth->id)->update(['score' => ($this->auth->score + $singjl['sign_4'])]);
                     $jl['after'] = $this->auth->score + $singjl['sign_4'];
-                    $jl['coin'] =  $singjl['sign_4'];
+                    $jl['coin'] = $singjl['sign_4'];
                     break;
 
                 case 5:
                     $ret = Db::table('box_user')->where('id', $this->auth->id)->update(['score' => ($this->auth->score + $singjl['sign_5'])]);
                     $jl['after'] = $this->auth->score + $singjl['sign_5'];
-                    $jl['coin'] =  $singjl['sign_5'];
+                    $jl['coin'] = $singjl['sign_5'];
                     break;
 
                 case 6:
                     $ret = Db::table('box_user')->where('id', $this->auth->id)->update(['score' => ($this->auth->score + $singjl['sign_6'])]);
                     $jl['after'] = $this->auth->score + $singjl['sign_6'];
-                    $jl['coin'] =  $singjl['sign_6'];
+                    $jl['coin'] = $singjl['sign_6'];
                     break;
                 case 7:
                     $data = [
@@ -804,7 +817,7 @@ class User extends Api
                 default:
                     $ret = Db::table('box_user')->where('id', $this->auth->id)->update(['score' => ($this->auth->score + $singjl['sign_1'])]);
                     $jl['after'] = $this->auth->score + $singjl['sign_1'];
-                    $jl['coin'] =  $singjl['sign_1'];
+                    $jl['coin'] = $singjl['sign_1'];
                     break;
             }
             if (!empty($ret)) {
@@ -825,7 +838,7 @@ class User extends Api
                 /**成功就返回，或者处理一些程序，比如加积分*/
                 $ret = Db::table('box_user')->where('id', $this->auth->id)->update(['score' => ($this->auth->score + $singjl['sign_1'])]);
                 $jl['after'] = $this->auth->score + $singjl['sign_1'];
-                $jl['coin'] =  $singjl['sign_1'];
+                $jl['coin'] = $singjl['sign_1'];
                 Db::table('box_coin_record')->insert($jl);
                 $this->success('签到成功');
             } else {
@@ -833,7 +846,7 @@ class User extends Api
             }
         }
     }
-    
+
     // /**
     //  * 用户签到
     //  */
@@ -947,15 +960,15 @@ class User extends Api
         if (empty($sign)) {
             $this->success('还未进行签到', $arr);
         } else {
-            if(!empty($day_sign)){
+            if (!empty($day_sign)) {
                 $arr['sign'] = $day_sign;
                 echo json_encode(['code' => 1, 'msg' => '签到天数1', 'data' => $arr]);
                 exit;
-            }else if(!empty($zt_sign)){
+            } else if (!empty($zt_sign)) {
                 $arr['sign'] = $zt_sign;
                 echo json_encode(['code' => 1, 'msg' => '签到天数1', 'data' => $arr]);
                 exit;
-            }else{
+            } else {
                 Db::table('box_sign_jilu')->where('user_id', $this->auth->id)->update(['count' => 0]);
                 $this->success('已经断签了', $arr);
             }
@@ -979,6 +992,7 @@ class User extends Api
             // }
         }
     }
+
     /**
      * 获取未开启盲盒
      */
@@ -1047,8 +1061,8 @@ class User extends Api
         // $tmp = [];
         $my_coulist = [];
         foreach ($coupons as &$cou_v) {
-            foreach ($coulist as $k=> &$cou_s) {
-                if($cou_v['end_time']<time()){
+            foreach ($coulist as $k => &$cou_s) {
+                if ($cou_v['end_time'] < time()) {
                     // unset($coulist[$k]);
                     continue;
                 }
@@ -1064,6 +1078,7 @@ class User extends Api
         }
         $this->success('我的优惠券', $my_coulist);
     }
+
     /**
      * 兑换码使用
      */
@@ -1078,7 +1093,7 @@ class User extends Api
             $this->error('已经使用过了哦~');
         }
         //没有使用过进行记录
-        $ret =  Db::table('box_user')->where('id', $this->auth->id)->update(['score' => $this->auth->score + $km['amount']]);
+        $ret = Db::table('box_user')->where('id', $this->auth->id)->update(['score' => $this->auth->score + $km['amount']]);
         if (empty($ret)) {
             $this->error('兑换失败');
         }
@@ -1097,6 +1112,7 @@ class User extends Api
         ]);
         $this->success('兑换成功');
     }
+
     /**
      * 获取系统通知
      */
@@ -1105,15 +1121,17 @@ class User extends Api
         $not = Db::table('box_notice')->select();
         $this->success('系统通知', $not);
     }
+
     /**
      * 查看对应系统通知
-     * 
+     *
      */
     public function getNotice()
     {
         $n = Db::table('box_notice')->where('id', input('nid'))->find();
         $this->success('查询成功', $n);
     }
+
     //获取下级用户
     public function getTuand()
     {
@@ -1121,8 +1139,9 @@ class User extends Api
         // foreach ($tuandui)
         $this->success('查询成功', $tuandui);
     }
+
     /*获取access_token,不能用于获取用户信息的token*/
-    public  function getAccessToken()
+    public function getAccessToken()
     {
         $s = Db::table('box_setting')->where('id', 1)->find();
         $appid = $s['mpappid'];
@@ -1140,6 +1159,7 @@ class User extends Api
         return $res;
         exit();
     }
+
     //图片合法性验证
     public function http_request($url, $data = null)
     {
@@ -1162,6 +1182,7 @@ class User extends Api
         return $output;
         exit();
     }
+
     //  获取手机号
     public function getPhoneNumber()
     {
@@ -1186,6 +1207,7 @@ class User extends Api
             die();
         }
     }
+
     /**
      * 对接快递100
      */
@@ -1226,14 +1248,15 @@ class User extends Api
         $data = json_decode($result);
         $this->success('快递信息', $data);
     }
-    
+
     /**
-    * 商品多选转增
-    **/
-    public function echargez_arr(){
-        
+     * 商品多选转增
+     **/
+    public function echargez_arr()
+    {
+
     }
-    
+
     /**
      * 商品转赠
      */
@@ -1245,22 +1268,22 @@ class User extends Api
         // exit;
         // $prizeId = input('prizeid');
         $phone = input('mobile');
-        $users =  Db::table('box_user')->where('mobile', $phone)->find();
+        $users = Db::table('box_user')->where('mobile', $phone)->find();
 
-        if(is_array($prizeId)){
+        if (is_array($prizeId)) {
             if (!empty($users)) {
                 $mobile = $this->auth->mobile;
                 // 更新盒柜
                 if ($phone == $mobile) {
                     $this->error('不能转赠给自己!');
                 }
-                $prize = Db::table('box_prize_record')->where('id','in', $prizeId)->update(['user_id' => $users['id']]);
+                $prize = Db::table('box_prize_record')->where('id', 'in', $prizeId)->update(['user_id' => $users['id']]);
                 if (empty($prize)) {
                     $this->error('转赠失败');
                 }
-                $shop = Db::table('box_prize_record')->where('id', 'in',$prizeId)->select();
+                $shop = Db::table('box_prize_record')->where('id', 'in', $prizeId)->select();
                 // $times = date("Y-m-d H:i:s", time());
-                foreach ($shop as $shop_v){
+                foreach ($shop as $shop_v) {
                     $data = [
                         'lyuserid' => $this->auth->id,
                         'jsuserid' => $users['id'],
@@ -1282,7 +1305,7 @@ class User extends Api
             } else {
                 $this->error('手机号未注册！');
             }
-        }else{
+        } else {
             if (!empty($users)) {
                 $mobile = $this->auth->mobile;
                 // 更新盒柜
@@ -1316,6 +1339,7 @@ class User extends Api
         }
 
     }
+
     /**
      * 分佣明细
      */
@@ -1339,6 +1363,7 @@ class User extends Api
         }
         $this->success('分佣明细', $jl);
     }
+
     /**
      * 转赠记录
      */
@@ -1355,6 +1380,7 @@ class User extends Api
         }
         $this->success('转赠记录', $zzjl);
     }
+
     /**
      * 申请代理
      */
@@ -1383,6 +1409,7 @@ class User extends Api
             $this->error('申请失败');
         }
     }
+
     /*
     * 查询代理申请状态
     */
@@ -1399,9 +1426,54 @@ class User extends Api
         }
         $this->success('状态', $status);
     }
+
     public function getAdminUserImg()
     {
-        $this->success('获取成功',['img'=>Db::table('box_admin')->where('id',1)->value('avatar')]);
-        
+        $this->success('获取成功', ['img' => Db::table('box_admin')->where('id', 1)->value('avatar')]);
+
+    }
+
+
+
+    /*
+     * google授权登录
+     * @param string nickName 昵称
+     * @param string unionid unionid
+     * @param string openid openid
+     * @param string email 邮箱（用户）
+    */
+    public  function  googleLogin()
+    {
+        $param = $this->request->param();
+        $nickName = $param['nickName'];
+        $unionId = $param['unionid'];
+        $openid=$param['openid'];
+        $email=$param['email'];
+        if (!$email) {
+            $this->error('google登录授权失败m,请稍后再试');
+        }
+        $user = \app\common\model\User::getByEmail($email);
+        if ($user) {
+            if ($user->status != 'normal') {
+                $this->error('账号被锁定');
+            }
+            //如果已经有账号则直接登录
+            $ret = $this->auth->direct($user->id);
+        } else {
+            $ret = $this->auth->register($nickName, Random::alnum(), $email, '', ['google_unionid' => $unionId,'google_openid'=>$openid]);
+        }
+        if ($ret) {
+            $data = $this->auth->getUserinfo();
+            $data['score'] = $data['score'] ? floatval($data['score']) : 0;
+            $data['avatar'] = $data['avatar'] ? cdnurl($data['avatar'], true) : '';
+            unset($data['id']);
+            unset($data['user_id']);
+            unset($data['createtime']);
+            unset($data['expiretime']);
+            unset($data['expires_in']);
+            $this->success('登录成功', $data);
+        } else {
+            $this->error($this->auth->getError());
+        }
     }
 }
