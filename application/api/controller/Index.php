@@ -330,7 +330,7 @@ class Index extends Api
     //                 //如果是代理
     //                 //金币兑换比例 1:100
     //                 $bl = $s['zhbl'];
-    //                 $fyje = $order['pay_coin'] * ($u['sharebl'] / 100);
+    //                 $fyje = +$order['pay_coin'] * ($u['sharebl'] / 100);
     //                 //获取的返佣幸运币金额
     //                 $coin = $fyje;
     //                 $usercoin = Db::table('box_user')->where('id', $u['id'])->update(['score' => $u['score'] + $coin]);

@@ -348,6 +348,7 @@ class Upload
      */
     public function upload($savekey = null)
     {
+
         if (empty($this->file)) {
             throw new UploadException(__('No file upload or server upload limit exceeded'));
         }

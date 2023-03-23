@@ -32,7 +32,8 @@
         "ext-bcmath": "*",
         "txthinking/mailer": "^2.0",
         "wechatpay/wechatpay": "^1.4",
-        "google/apiclient": "^2.13"
+        "google/apiclient": "^2.13",
+        "aws/aws-sdk-php": "^3.261"
     },
     "config": {
         "preferred-install": "dist",
