@@ -69,6 +69,7 @@ class Email
 
         //设置发件人
         $this->from($this->options['mail_from'], $this->options['mail_smtp_user']);
+        var_dump(json($this->mail));
     }
 
     /**
@@ -209,6 +210,8 @@ class Email
      */
     public function send()
     {
+
+
         $result = false;
         if (in_array($this->options['mail_type'], [1, 2])) {
             try {
@@ -222,6 +225,8 @@ class Email
                 $message = mb_convert_encoding($message, 'UTF-8', 'GBK,GB2312,BIG5');
                 $this->setError($message);
             } catch (\Exception $e) {
+
+                var_dump($e->getMessage());
                 $this->setError($e->getMessage());
             }
 

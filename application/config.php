@@ -299,9 +299,5 @@ return [
         'version'               => '1.3.4.20220530',
         //API接口地址
         'api_url'               => 'https://api.fastadmin.net',
-    ],
-    'google'=>[
-        'google_appid'=>'846719332886-aulitahujg1t1227po1hh0h719t638b2.apps.googleusercontent.com',
-        'google_appkey'=>'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'
     ]
 ];

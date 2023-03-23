@@ -40,7 +40,7 @@ class Banner extends Model
     
     public function getTagList()
     {
-        return ['scsy' => __('Tag scsy'), 'sczj' => __('Tag sczj')];
+        return ['scsy' => __('Tag scsy'), 'sczj' => __('Tag sczj'),'mhsy' => __('Tag mhsy')];
     }
 
 
