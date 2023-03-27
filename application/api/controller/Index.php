@@ -17,7 +17,7 @@ use epay\epay;
  */
 class Index extends Api
 {
-    protected $noNeedLogin = ['getSettingkf', 'getHd', 'getCoupon', 'getBoxlist', 'getSite', 'getSetting', 'getCards', 'notifyx', 'getApp', 'SgetOne', 'index','upload','getBanner'];
+    protected $noNeedLogin = ['getSettingkf', 'getHd', 'getCoupon', 'getBoxlist', 'getSite', 'getSetting', 'getCards', 'notifyx', 'getApp', 'SgetOne', 'index','upload'];
     protected $noNeedRight = ['*'];
 
     /**
@@ -330,7 +330,7 @@ class Index extends Api
     //                 //如果是代理
     //                 //金币兑换比例 1:100
     //                 $bl = $s['zhbl'];
-    //                 $fyje = +$order['pay_coin'] * ($u['sharebl'] / 100);
+    //                 $fyje = $order['pay_coin'] * ($u['sharebl'] / 100);
     //                 //获取的返佣幸运币金额
     //                 $coin = $fyje;
     //                 $usercoin = Db::table('box_user')->where('id', $u['id'])->update(['score' => $u['score'] + $coin]);
@@ -892,20 +892,4 @@ class Index extends Api
         $s = Db::table('box_setting')->where('id', 1)->find();
         $this->success('域名', $s['domain']);
     }
-
-    /**
-     * 盲盒首页分类
-     */
-    public function getBanner()
-    {
-        $banner = Db::table('box_banner')->where('bswitch', 1)->where('tag','mhsy')->order('weigh DESC')->select();
-        if (empty($banner)) {
-            $this->error('未找到轮播图');
-        }
-        foreach ($banner as &$banner_v) {
-            $banner_v['image'] = cdnurl($banner_v['image'], true);
-        }
-        $this->success('轮播图数据', $banner);
-    }
-
 }

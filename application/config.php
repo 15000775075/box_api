@@ -299,5 +299,5 @@ return [
         'version'               => '1.3.4.20220530',
         //API接口地址
         'api_url'               => 'https://api.fastadmin.net',
-    ]
+    ],
 ];

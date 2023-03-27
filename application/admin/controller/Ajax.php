@@ -24,7 +24,7 @@ use AliCloud\OSS\Core\OssException;
 class Ajax extends Backend
 {
 
-    protected $noNeedLogin = ['lang','upload'];
+    protected $noNeedLogin = ['lang'];
     protected $noNeedRight = ['*'];
     protected $layout = '';
 

@@ -31,9 +31,7 @@
         "ext-pdo": "*",
         "ext-bcmath": "*",
         "txthinking/mailer": "^2.0",
-        "wechatpay/wechatpay": "^1.4",
-        "google/apiclient": "^2.13",
-        "aws/aws-sdk-php": "^3.261"
+        "wechatpay/wechatpay": "^1.4"
     },
     "config": {
         "preferred-install": "dist",

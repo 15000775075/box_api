@@ -30,12 +30,12 @@ return array (
     'example' => '示例分组',
   ),
   'mail_type' => '1',
-  'mail_smtp_host' => 'smtp.gmail.com',
+  'mail_smtp_host' => 'smtp.qq.com',
   'mail_smtp_port' => '465',
-  'mail_smtp_user' => 'urprisebox120@gmail.com',
-  'mail_smtp_pass' => 'arfklwnvqlpbjxxv',
+  'mail_smtp_user' => '10000',
+  'mail_smtp_pass' => 'password',
   'mail_verify_type' => '2',
-  'mail_from' => 'urprisebox120@gmail.com',
+  'mail_from' => '10000@qq.com',
   'attachmentcategory' => 
   array (
     'category1' => '分类一',

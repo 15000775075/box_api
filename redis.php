@@ -5,7 +5,7 @@
 return array (
   'host' => '127.0.0.1',
   'port' => 6379,
-  'password' => '123456',
+  'password' => '',
   'select' => 0,
   'timeout' => 0,
   'expire' => 0,

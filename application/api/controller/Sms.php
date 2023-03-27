@@ -100,12 +100,11 @@ class Sms extends Api
                 $this->error(__('未注册'));
             }
         }
-        $this->success(__('成功'));
-       // $ret = Smslib::check($mobile, $captcha, $event);
-       // if ($ret) {
-       //     $this->success(__('成功'));
-       // } else {
-       //     $this->error(__('验证码不正确'));
-       // }
+        $ret = Smslib::check($mobile, $captcha, $event);
+        if ($ret) {
+            $this->success(__('成功'));
+        } else {
+            $this->error(__('验证码不正确'));
+        }
     }
 }

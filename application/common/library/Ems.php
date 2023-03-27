@@ -60,8 +60,8 @@ class Ems
                 $obj = new Email();
                 $result = $obj
                     ->to($params->email)
-                    ->subject('Please check your verification code！')
-                    ->message("Your captcha is：" . $params->code . "，" . ceil(self::$expire / 60) . "Within minutes。")
+                    ->subject('请查收你的验证码！')
+                    ->message("你的验证码是：" . $params->code . "，" . ceil(self::$expire / 60) . "分钟内有效。")
                     ->send();
                 return $result;
             });
